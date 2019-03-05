@@ -1,0 +1,44 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "PROJECT": "",
+    "PACKERCONFIG": "",
+    "ENVTAG": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "us-west-2",
+    "source_ami": "ami-xyz",
+    "vpc_id": "vpc-xyz",
+    "subnet_id":"subnet-xyz",
+    "ssh_timeout": "5m",
+    "instance_type": "t2.micro",
+    "ssh_username": "centos",
+    "ami_name": "packer-IPC-gp {{timestamp}}",
+    "tags": {
+        "Name": "packer-ami",
+        "Createdby": "packer",
+        "Project": "{{user `PROJECT`}}",
+        "servicename": "{{user `PACKERCONFIG`}}",
+        "baked": "true",
+        "env": "{{user `ENVTAG`}}",
+        "preserve-ami": "false",
+        "source-ami": "{{user `BASEAMI`}}"
+    },
+    "run_tags": {
+        "product": "abc",
+        "component": "temp-packer-build",
+        "environment": "dev",
+        "owner": "a@abc.com"
+    }
+  }],
+
+    "provisioners": [{
+        "type": "shell",
+        "script": "configure-IPC-gp-co6.sh"
+    }]
+
+}

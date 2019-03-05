@@ -1,0 +1,55 @@
+{
+    "variables": {
+        "PROJECT": "",
+        "PACKERCONFIG": "",
+        "ENVTAG": "",
+        "BASEAMI": "",
+        "TEMPKEYPAIR": ""
+    },
+
+    "builders": [{
+        "type": "amazon-ebs",
+        "region": "us-west-2",
+        "source_ami": "{{user `BASEAMI`}}",
+        "instance_type": "t2.micro",
+        "ssh_username": "centos",
+        "ami_name": "{{user `PACKERCONFIG`}}-{{ timestamp}}",
+        "subnet_id": "subnet-xyz",
+        "security_group_id": "sg-xyz",
+        "temporary_key_pair_name": "{{user `TEMPKEYPAIR`}}",
+        "ssh_timeout": "10m",
+        "ssh_pty": "true",
+        "ami_block_device_mappings": [
+          {
+            "device_name": "/dev/sda1",
+            "volume_size": 100,
+            "volume_type": "gp2",
+            "delete_on_termination": "true"
+          }
+        ],
+        "run_tags": {
+            "product": "abc",
+            "component": "temp-packer-build",
+            "environment": "dev",
+            "owner": "a@abc.com"
+        },
+        "tags": {
+            "Name": "packer-ami-{{user `PROJECT`}}",
+            "createdby": "packer",
+            "product": "abc",
+            "component": "{{user `PACKERCONFIG`}}",
+            "baked": "true",
+            "environment": "{{user `ENVTAG`}}",
+            "preserve-ami": "false",
+            "source-ami": "{{user `BASEAMI`}}",
+            "owner": "a@abc.com"
+        }
+    }],
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "configure-{{user `PACKERCONFIG`}}.sh"
+        }
+    ]
+}
